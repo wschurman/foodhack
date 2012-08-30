@@ -96,7 +96,7 @@ function render_question_page(req, res) {
     layout: false,
     req: req,
     app: app,
-    p: req.param('p')
+    q: req.param('q')
   });
 }
 
@@ -109,7 +109,7 @@ function render_submit(req, res) {
         app:       app,
         user:      user,
         is_admin:  user && is_admin(user.id),
-        q:         req.param('q')
+        p:         req.param('p')
       });
     });
   });
