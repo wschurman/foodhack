@@ -38,7 +38,7 @@
 
     <script>
       <% if (user) { %>
-      var socket = io.connect('http://localhost');
+      var socket = io.connect('/');
       socket.emit('register', { uid: <%= user.id %> });
       <% } %>
     </script>
