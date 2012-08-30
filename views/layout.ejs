@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Facebook Foodhack at Cornell" />
+    <meta name="author" content="wschurman" />
+
+    <title><%= app.name %></title>
+    <link rel="stylesheet" href="stylesheets/bootstrap.min.css" media="Screen" type="text/css" />
+    <link rel="stylesheet" href="stylesheets/main.css" type="text/css" />
+
+    <link href="scripts/prettyprint/prettify.css" type="text/css" rel="stylesheet" />
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- These are Open Graph tags.  They add meta data to your  -->
+    <!-- site that facebook uses when your content is shared     -->
+    <!-- over facebook.  You should fill these tags in with      -->
+    <!-- your data.  To learn more about Open Graph, visit       -->
+    <!-- 'https://developers.facebook.com/docs/opengraph/'       -->
+    <meta property="og:title" content="<%= app.name %>" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="<%= url() %>" />
+    <meta property="og:image" content="<%= url('/logo.png') %>" />
+    <meta property="og:site_name" content="<%= app.name %>" />
+    <meta property="og:description" content="Facebook Foodhack at Cornell" />
+    <meta property="fb:app_id" content="<%= app.id %>" />
+  </head>
+  <body onload="prettyPrint()">
+    <div id="fb-root"></div>
+    <script type="text/javascript">
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '<%= app.id %>', // App ID
+          channelUrl : '<%= url_no_scheme('/channel.html') %>', // Channel File
+          status     : true, // check login status
+          cookie     : true, // enable cookies to allow the server to access the session
+          xfbml      : true // parse XFBML
+        });
+
+        // Listen to the auth.login which will be called when the user logs in
+        // using the Login button
+        FB.Event.subscribe('auth.login', function(response) {
+          // We want to reload the page now so PHP can read the cookie that the
+          // Javascript SDK sat. But we don't want to use
+          // window.location.reload() because if this is in a canvas there was a
+          // post made to this page and a reload will trigger a message to the
+          // user asking if they want to send data again.
+          window.location = window.location;
+        });
+
+        FB.Canvas.setAutoGrow();
+      };
+
+      // Load the SDK Asynchronously
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/all.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Facebook Foodhack</a>
+          
+          <% if (user) { %>
+            <div class="pull-right span5">
+              <div class="span2" id="logged-in-user">
+                <img src="https://graph.facebook.com/<%= user.id %>/picture?type=square" width="20px" height="20px" />
+                <span><%= user.name %></span>
+              </div>
+              <div id="share-app" class="span2">
+                <a href="#" class="btn btn-small" id="postToWall" data-url="<%= url() %>">
+                  <i class="icon-share"></i> Post to Wall
+                </a>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="fb-login-button pull-right" data-scope="user_website,user_work_history"></div>
+          <% } %>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <%- body %>
+    </div>
+
+    <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Submit Solution</h3>
+      </div>
+      <div class="modal-body">
+        <img src="/images/ajax-loader.gif" />
+      </div>
+    </div>
+
+    <script type="text/javascript" src="/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/scripts/prettyprint/prettify.js"></script>
+
+    <script type="text/javascript">
+      function logResponse(response) {
+        if (console && console.log) {
+          console.log('The response was', response);
+        }
+      }
+
+      $(function(){
+        // Set up so we handle click on the buttons
+        $('#postToWall').click(function() {
+          FB.ui(
+            {
+              method : 'feed',
+              link   : $(this).attr('data-url')
+            },
+            function (response) {
+              // If response is null the user canceled the dialog
+              if (response != null) {
+                logResponse(response);
+              }
+            }
+          );
+        });
+      });
+    </script>
+  </body>
+</html>
+

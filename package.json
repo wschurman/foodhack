@@ -1,14 +1,15 @@
 {
-  "name":    "facebook-template-node",
+  "name":    "facebook-foodhack",
   "version": "0.0.1",
 
-  "description": "Template app for Heroku / Facebook integration, Node.js language",
+  "description": "Facebook Foodhack event at Cornell",
 
   "dependencies": {
     "async":     "0.1.18",
     "ejs":       "0.4.3",
     "express":   "2.4.6",
-    "faceplate": "0.0.4"
+    "faceplate": "0.0.4",
+    "mongoskin": "0.4.1"
   },
 
   "engines": {

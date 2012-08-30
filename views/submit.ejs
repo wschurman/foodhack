@@ -1,0 +1,31 @@
+<% if (user) { %>
+<p>Only your most recent submission for each question is stored. New submissions will overwrite.</p>
+<form class="form-horizontal" enctype="multipart/form-data" method="POST" action="/submit">
+  <input type="hidden" name="question" value="<%= p %>" />
+
+  <div class="control-group">
+    <label class="control-label" for="inputName">Name</label>
+    <div class="controls fb-form-name">
+      <img src="https://graph.facebook.com/<%= user.id %>/picture?type=square" width="20px" height="20px" />
+      <span><%= user.name %></span>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputAnswer">Raw Answer or URL of uploaded file (use cloudapp or something else)</label>
+    <div class="controls">
+      <textarea id="inputAnswer" name="answer" rows="5" style="width: 320px;"></textarea>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <button class="btn" data-dismiss="modal">Cancel</button>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+</form>
+
+<% } else { %>
+
+  <div class="fb-login-button" data-show-faces="false" data-width="750" data-scope="user_website,user_work_history"></div>
+
+<% } %>

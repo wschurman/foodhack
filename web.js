@@ -1,6 +1,8 @@
-var async   = require('async');
-var express = require('express');
-var util    = require('util');
+var async   = require('async'),
+    express = require('express'),
+    util    = require('util'),
+    fs      = require('fs'),
+    mongo   = require('mongoskin');
 
 // create an express webserver
 var app = express.createServer(
@@ -13,9 +15,11 @@ var app = express.createServer(
   require('faceplate').middleware({
     app_id: process.env.FACEBOOK_APP_ID,
     secret: process.env.FACEBOOK_SECRET,
-    scope:  'user_likes,user_photos,user_photo_video_tags'
+    scope:  'user_website,user_work_history'
   })
 );
+
+app.set('view options', { layout:'layout.ejs' });
 
 // listen to the PORT given to us in the environment
 var port = process.env.PORT || 3000;
@@ -43,11 +47,16 @@ app.dynamicHelpers({
   },
 });
 
+// Connect to MongoDB
+
+var ObjectID = mongo.ObjectID;
+var mdb = mongo.db('mongodb://heroku_app7048839:6688psq65ef8lb46ps1grdbdjt@ds037407-a.mongolab.com:37407/heroku_app7048839');
+var collection = mdb.collection('foodhack_submissions');
+
 function render_page(req, res) {
   req.facebook.app(function(app) {
     req.facebook.me(function(user) {
       res.render('index.ejs', {
-        layout:    false,
         req:       req,
         app:       app,
         user:      user
@@ -56,48 +65,48 @@ function render_page(req, res) {
   });
 }
 
-function handle_facebook_request(req, res) {
-
-  // if the user is logged in
-  if (req.facebook.token) {
-
-    async.parallel([
-      function(cb) {
-        // query 4 friends and send them to the socket for this socket id
-        req.facebook.get('/me/friends', { limit: 4 }, function(friends) {
-          req.friends = friends;
-          cb();
-        });
-      },
-      function(cb) {
-        // query 16 photos and send them to the socket for this socket id
-        req.facebook.get('/me/photos', { limit: 16 }, function(photos) {
-          req.photos = photos;
-          cb();
-        });
-      },
-      function(cb) {
-        // query 4 likes and send them to the socket for this socket id
-        req.facebook.get('/me/likes', { limit: 4 }, function(likes) {
-          req.likes = likes;
-          cb();
-        });
-      },
-      function(cb) {
-        // use fql to get a list of my friends that are using this app
-        req.facebook.fql('SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1', function(result) {
-          req.friends_using_app = result;
-          cb();
-        });
-      }
-    ], function() {
-      render_page(req, res);
+function render_submit(req, res) {
+  req.facebook.app(function(app) {
+    req.facebook.me(function(user) {
+      res.render('submit.ejs', {
+        layout: false,
+        req:       req,
+        app:       app,
+        user:      user,
+        p:         req.param('p')
+      });
     });
-
-  } else {
-    render_page(req, res);
-  }
+  });
 }
 
-app.get('/', handle_facebook_request);
-app.post('/', handle_facebook_request);
+var ObjectID = mongo.ObjectID;
+
+function insert_into_answer_db(data) {
+  data._id = new ObjectID(data.uid + data.question);
+  collection.save(data);
+}
+
+function do_post_submit(req, res) {
+  req.facebook.app(function(app) {
+    req.facebook.me(function(user) {
+
+      var data = {
+        uid: user.id,
+        name: user.name,
+        question: req.param('question'),
+        answer: req.param('answer')
+      }
+
+      insert_into_answer_db(data);
+
+      res.statusCode = 302;
+      res.setHeader("Location", "/?m=success&q=" + data.question);
+      res.end();
+    })
+  });
+}
+
+app.get('/', render_page);
+
+app.get('/submit', render_submit);
+app.post('/submit', do_post_submit);
