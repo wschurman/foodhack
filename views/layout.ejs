@@ -148,7 +148,14 @@
           FB.api(
             '/me/fbfoodhack:answer',
             'post',
-            { question: 'http://foodhack.herokuapp.com/question?q=' + $(this).attr('data-question-number') }
+            { question: 'http://foodhack.herokuapp.com/question?q=' + $(this).attr('data-question-number') },
+            function(response) {
+              if (!response || response.error) {
+                console.log('Error occured', response.error);
+              } else {
+                console.log('Cook was successful! Action ID: ' + response.id);
+              }
+            }
           );
         });
       });
