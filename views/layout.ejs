@@ -145,10 +145,13 @@
         });
 
         $('.submit_answer_button').live("click", function() {
+
+          var qn = $(this).attr('data-question-number');
+
           FB.api(
             '/me/fbfoodhack:answer',
             'post',
-            { question: 'http://foodhack.herokuapp.com/question?q=' + $(this).attr('data-question-number') },
+            { question: 'http://foodhack.herokuapp.com/question?q=' +  qn},
             function(response) {
               if (!response || response.error) {
                 console.log('Error occured', response.error);

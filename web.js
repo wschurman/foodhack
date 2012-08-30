@@ -109,7 +109,7 @@ function render_submit(req, res) {
         app:       app,
         user:      user,
         is_admin:  user && is_admin(user.id),
-        p:         req.param('p')
+        q:         req.param('q')
       });
     });
   });
