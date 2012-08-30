@@ -2,7 +2,23 @@ var async   = require('async'),
     express = require('express'),
     util    = require('util'),
     fs      = require('fs'),
-    mongo   = require('mongoskin');
+    mongo   = require('mongoskin'),
+    sio     = require('socket.io'),
+    _       = require('underscore');
+
+
+// ids of admin clients
+var client_id = 0;
+// in memory hash table
+var clients = {};
+
+var admin_uids = {
+  700650173: true,
+  674656292: true
+};
+function is_admin(uid) {
+  return _.has(admin_uids, uid);
+}
 
 // create an express webserver
 var app = express.createServer(
@@ -20,6 +36,14 @@ var app = express.createServer(
 );
 
 app.set('view options', { layout:'layout.ejs' });
+
+var io = sio.listen(app);
+
+io.configure(function () {
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
+  io.set("log level", 1);
+});
 
 // listen to the PORT given to us in the environment
 var port = process.env.PORT || 3000;
@@ -52,6 +76,7 @@ app.dynamicHelpers({
 var ObjectID = mongo.ObjectID;
 var mdb = mongo.db('mongodb://heroku_app7048839:6688psq65ef8lb46ps1grdbdjt@ds037407-a.mongolab.com:37407/heroku_app7048839');
 var collection = mdb.collection('foodhack_submissions');
+var ObjectID = mongo.ObjectID;
 
 function render_page(req, res) {
   req.facebook.app(function(app) {
@@ -59,7 +84,8 @@ function render_page(req, res) {
       res.render('index.ejs', {
         req:       req,
         app:       app,
-        user:      user
+        user:      user,
+        is_admin:  user && is_admin(user.id)
       });
     });
   });
@@ -73,17 +99,46 @@ function render_submit(req, res) {
         req:       req,
         app:       app,
         user:      user,
+        is_admin:  user && is_admin(user.id),
         p:         req.param('p')
       });
     });
   });
 }
 
-var ObjectID = mongo.ObjectID;
+function render_admin(req, res) {
+  req.facebook.app(function(app) {
+    req.facebook.me(function(user) {
+      if (user && is_admin(user.id)) {
+        res.render('admin.ejs', {
+          req:       req,
+          app:       app,
+          user:      user,
+          is_admin:  is_admin(user.id)
+        });
+      } else {
+        res.statusCode = 302;
+        res.setHeader("Location", "/?m=error");
+        res.end();
+      }
+    });
+  });
+}
 
-function insert_into_answer_db(data) {
+function insertIntoAnswerDB(data) {
   data._id = new ObjectID(data.uid + data.question);
   collection.save(data);
+
+  // notify admins
+  _.each(clients, function(c, id) {
+    if (c.socket && c.socket.is_admin) {
+      c.socket.emit('submissions', [data]);
+    }
+  });
+}
+
+function getAllSubmissions(cb) {
+  collection.find().toArray(cb);
 }
 
 function do_post_submit(req, res) {
@@ -97,7 +152,7 @@ function do_post_submit(req, res) {
         answer: req.param('answer')
       }
 
-      insert_into_answer_db(data);
+      insertIntoAnswerDB(data);
 
       res.statusCode = 302;
       res.setHeader("Location", "/?m=success&q=" + data.question);
@@ -110,3 +165,39 @@ app.get('/', render_page);
 
 app.get('/submit', render_submit);
 app.post('/submit', do_post_submit);
+
+app.get('/admin', render_admin);
+
+
+/* Socket Functions */
+
+io.sockets.on('connection', function (socket) {
+  
+  client_id += 1;
+  var id = client_id;
+  socket.client_id = id;
+  socket.is_admin = false;
+
+  socket.on('register', function(data) {
+    if (is_admin(data.uid)) {
+      socket.is_admin = true;
+    }
+    clients[id] = {
+      socket: socket
+    };
+  });
+
+  socket.on('get_submissions', function() {
+    if (socket.is_admin) {
+      getAllSubmissions(function(err, submission_data) {
+        socket.emit('submissions', submission_data);
+      });
+    }
+  });
+
+  socket.on('disconnect', function () {
+    if (_.has(clients, socket.client_id)) {
+      delete clients[socket.client_id];
+    }
+  });
+});

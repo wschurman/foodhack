@@ -29,6 +29,19 @@
     <meta property="og:site_name" content="<%= app.name %>" />
     <meta property="og:description" content="Facebook Foodhack at Cornell" />
     <meta property="fb:app_id" content="<%= app.id %>" />
+
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/scripts/underscore-min.js"></script>
+    <script type="text/javascript" src="/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/scripts/prettyprint/prettify.js"></script>
+
+    <script>
+      <% if (user) { %>
+      var socket = io.connect('http://localhost');
+      socket.emit('register', { uid: <%= user.id %> });
+      <% } %>
+    </script>
   </head>
   <body onload="prettyPrint()">
     <div id="fb-root"></div>
@@ -70,8 +83,11 @@
       <div class="navbar-inner">
         <div class="container">
           <a class="brand" href="/">Facebook Foodhack</a>
-          
-          <% if (user) { %>
+          <% if (is_admin) { %>
+          <ul class="nav">
+            <li><a href="/admin">Admin</a></li>
+          </ul>
+          <% } if (user) { %>
             <div class="pull-right span5">
               <div class="span2" id="logged-in-user">
                 <img src="https://graph.facebook.com/<%= user.id %>/picture?type=square" width="20px" height="20px" />
@@ -104,10 +120,6 @@
       </div>
     </div>
 
-    <script type="text/javascript" src="/scripts/jquery.min.js"></script>
-    <script type="text/javascript" src="/scripts/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/scripts/prettyprint/prettify.js"></script>
-
     <script type="text/javascript">
       function logResponse(response) {
         if (console && console.log) {
@@ -132,6 +144,7 @@
           );
         });
       });
+
     </script>
   </body>
 </html>
