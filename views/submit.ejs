@@ -1,5 +1,5 @@
 <% if (user) { %>
-<p>Only your most recent submission for each question is stored. New submissions will overwrite.</p>
+<p>Only your most recent submission for each question is stored. New submissions will overwrite. You can also submit at the table.</p>
 <form class="form-horizontal" enctype="multipart/form-data" method="POST" action="/submit">
   <input type="hidden" name="question" value="<%= p %>" />
 

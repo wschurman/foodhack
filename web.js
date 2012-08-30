@@ -31,7 +31,7 @@ var app = express.createServer(
   require('faceplate').middleware({
     app_id: process.env.FACEBOOK_APP_ID,
     secret: process.env.FACEBOOK_SECRET,
-    scope:  'user_website,user_work_history,publish_actions'
+    scope:  'user_website,user_work_history'
   })
 );
 
@@ -88,15 +88,6 @@ function render_page(req, res) {
         is_admin:  user && is_admin(user.id)
       });
     });
-  });
-}
-
-function render_question_page(req, res) {
-  res.render('question.ejs', {
-    layout: false,
-    req: req,
-    app: app,
-    q: req.param('q')
   });
 }
 
@@ -174,8 +165,6 @@ app.get('/', render_page);
 
 app.get('/submit', render_submit);
 app.post('/submit', do_post_submit);
-
-app.get('/question', render_question_page);
 
 app.get('/admin', render_admin);
 

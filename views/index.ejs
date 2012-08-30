@@ -21,8 +21,6 @@ var release = new Date('September 05, 2012 17:00:00');
 
 if (user && d >= release || user && is_admin) { %>
 
-<button class="btn btn-primary submit_answer_button" data-question-number="1-1">Submit</button>
-
 <div class="tabbable tabs-left" id="problem-tabs">
   <ul class="nav nav-tabs">
     <li class="active">
@@ -70,7 +68,7 @@ if (user && d >= release || user && is_admin) { %>
 <div class="hero-unit">
   <h1>Welcome to <%= app.name %></h1>
   <span>
-    Please <div class="fb-login-button" data-show-faces="false" data-width="750" data-scope="user_website,user_work_history,publish_actions"></div> to solve the problems!
+    Please <div class="fb-login-button" data-show-faces="false" data-width="750" data-scope="user_website,user_work_history"></div> to solve the problems!
   </span>
   <div class="cookies"></div>
   <div class="burrito"></div>

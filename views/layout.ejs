@@ -100,7 +100,7 @@
               </div>
             </div>
           <% } else { %>
-            <div class="fb-login-button pull-right" data-scope="user_website,user_work_history,publish_actions"></div>
+            <div class="fb-login-button pull-right" data-scope="user_website,user_work_history"></div>
           <% } %>
         </div>
       </div>
@@ -139,24 +139,6 @@
               // If response is null the user canceled the dialog
               if (response != null) {
                 logResponse(response);
-              }
-            }
-          );
-        });
-
-        $('.submit_answer_button').live("click", function() {
-
-          var qn = $(this).attr('data-question-number');
-
-          FB.api(
-            '/me/fbfoodhack:answer',
-            'post',
-            { question: 'http://foodhack.herokuapp.com/question?q=' +  qn},
-            function(response) {
-              if (!response || response.error) {
-                console.log('Error occured', response.error);
-              } else {
-                console.log('Cook was successful! Action ID: ' + response.id);
               }
             }
           );
