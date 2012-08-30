@@ -14,9 +14,12 @@
     <b>There was an error 404</b> Come talk to us at the table to solve it.
   </div>
 
-<% } %>
+<% }
 
-<% if (user) { %>
+var d = new Date();
+var release = new Date('September 05, 2012 17:00:00');
+
+if (user && d >= release || user && is_admin) { %>
 
 <div class="tabbable tabs-left" id="problem-tabs">
   <ul class="nav nav-tabs">
@@ -55,6 +58,12 @@
 </div>
 
 <% } else { %>
+
+<% if (d < release) { %>
+<div class="alert alert-info">
+  <b>This event starts Wednesday, September 5th, 2015 at 5:00 PM</b>
+</div>
+<% } %>
 
 <div class="hero-unit">
   <h1>Welcome to <%= app.name %></h1>
