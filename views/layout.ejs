@@ -100,7 +100,7 @@
               </div>
             </div>
           <% } else { %>
-            <div class="fb-login-button pull-right" data-scope="user_website,user_work_history"></div>
+            <div class="fb-login-button pull-right" data-scope="user_website,user_work_history,publish_actions"></div>
           <% } %>
         </div>
       </div>
@@ -142,6 +142,13 @@
               }
             }
           );
+        });
+
+        $('.submit_answer_button').live("click", function() {
+          FB.api(
+            '/me/fbfoodhack:answer',
+            'post',
+            { question: 'http://foodhack.herokuapp.com/question?q=' + $(this).attr('data-question-number') }
         });
       });
 
