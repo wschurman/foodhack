@@ -92,7 +92,7 @@ function render_page(req, res) {
 }
 
 function render_question_page(req, res) {
-  res.render('quetion.ejs', {
+  res.render('question.ejs', {
     layout: false,
     req: req,
     app: app,
