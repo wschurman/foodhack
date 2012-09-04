@@ -90,8 +90,12 @@
           <% } if (user) { %>
             <div class="pull-right span5">
               <div class="span2" id="logged-in-user">
-                <img src="https://graph.facebook.com/<%= user.id %>/picture?type=square" width="20px" height="20px" />
-                <span><%= user.name %></span>
+                <a href="/me">
+                  <img src="https://graph.facebook.com/<%= user.id %>/picture?type=square" width="20px" height="20px" />
+                </a>
+                <a href="/me">
+                  <span><%= user.name %></span>
+                </a>
               </div>
               <div id="share-app" class="span2">
                 <a href="#" class="btn btn-small" id="postToWall" data-url="http://foodhack.herokuapp.com/">

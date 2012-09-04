@@ -5,6 +5,10 @@
 	color: #fefefe;
 }
 
+#logged-in-user a {
+  color: #fefefe;
+}
+
 #logged-in-user img {
 	margin-top: -2px;
 }

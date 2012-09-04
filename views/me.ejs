@@ -1,0 +1,34 @@
+<div class="pusher"></div>
+
+<table class="table table-hover table-striped table-bordered" id="submissions">
+  <caption>Submissions</caption>
+  <thead>
+    <tr>
+      <th>Question</th>
+      <th>Answer</th>
+    </tr>
+  </thead>
+</table>
+
+<script>
+  socket.emit('get_my_submissions');
+  socket.on('submissions', function(data) {
+    _.each(data, function(submission) {
+      var elem = $("<tr>");
+      var cols = [
+        $("<td>").html(submission.question),
+        $("<td>").html(submission.answer),
+      ];
+
+      _.each(cols, function(col) {
+        elem.append(col);
+      });
+
+      $("#submissions").append(elem);
+    });
+  });
+
+  $("#submissions tr").live('click', function() {
+    $(this).toggleClass('info');
+  });
+</script>

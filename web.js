@@ -91,6 +91,19 @@ function render_page(req, res) {
   });
 }
 
+function render_me(req, res) {
+  req.facebook.app(function(app) {
+    req.facebook.me(function(user) {
+      res.render('me.ejs', {
+        req:       req,
+        app:       app,
+        user:      user,
+        is_admin:  user && is_admin(user.id)
+      });
+    });
+  });
+}
+
 function render_submit(req, res) {
   req.facebook.app(function(app) {
     req.facebook.me(function(user) {
@@ -141,6 +154,10 @@ function getAllSubmissions(cb) {
   collection.find().toArray(cb);
 }
 
+function getMySubmissions(uid, cb) {
+  collection.find({"uid": ""+uid+""}).toArray(cb);
+}
+
 function do_post_submit(req, res) {
   req.facebook.app(function(app) {
     req.facebook.me(function(user) {
@@ -166,10 +183,11 @@ app.get('/', render_page);
 app.get('/submit', render_submit);
 app.post('/submit', do_post_submit);
 
+app.get('/me', render_me);
 app.get('/admin', render_admin);
 
 
-/* Socket Functions */
+/* Socket Functions, these can be exploited... whatever */
 
 io.sockets.on('connection', function (socket) {
   
@@ -182,6 +200,7 @@ io.sockets.on('connection', function (socket) {
     if (is_admin(data.uid)) {
       socket.is_admin = true;
     }
+    socket.uid = data.uid;
     clients[id] = {
       socket: socket
     };
@@ -193,6 +212,12 @@ io.sockets.on('connection', function (socket) {
         socket.emit('submissions', submission_data);
       });
     }
+  });
+
+  socket.on('get_my_submissions', function() {
+    getMySubmissions(socket.uid, function(err, submission_data) {
+      socket.emit('submissions', submission_data);
+    });
   });
 
   socket.on('disconnect', function () {
