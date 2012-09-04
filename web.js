@@ -4,6 +4,7 @@ var async   = require('async'),
     fs      = require('fs'),
     mongo   = require('mongoskin'),
     sio     = require('socket.io'),
+    crypto = require('crypto'),
     _       = require('underscore');
 
 
@@ -76,7 +77,6 @@ app.dynamicHelpers({
 var ObjectID = mongo.ObjectID;
 var mdb = mongo.db('mongodb://heroku_app7048839:6688psq65ef8lb46ps1grdbdjt@ds037407-a.mongolab.com:37407/heroku_app7048839');
 var collection = mdb.collection('foodhack_submissions');
-var ObjectID = mongo.ObjectID;
 
 function render_page(req, res) {
   req.facebook.app(function(app) {
@@ -139,7 +139,10 @@ function render_admin(req, res) {
 }
 
 function insertIntoAnswerDB(data) {
-  data._id = new ObjectID(data.uid + data.question);
+  var str = data.uid + data.question;
+  var hash = crypto.createHash('md5').update(str).digest("hex").substr(0, 12);
+  console.log("AHAHSSHSHS", hash);
+  data._id = new ObjectID(hash);
   collection.save(data);
 
   // notify admins
