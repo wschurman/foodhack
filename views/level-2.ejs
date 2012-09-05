@@ -115,7 +115,7 @@ function quicksort('array')
         At each recursive step of this implementation, two new arrays are created
         when the array is partitioned. Modify this implementation so that it performs
         the partitioning and swapping of elements in place. The run-time of the
-        whole algorithm must still be O(NlogN), but should now use constant space.
+        whole algorithm must still be O(n * log(n)), but should now use constant space.
 </div>
 
 <a href="/submit?p=2-7" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
@@ -129,7 +129,7 @@ function quicksort('array')
   Write a function that takes in an array of (N-1) integers. These integers
         are unordered and numbered from 0 to N, except that one of the integers is
         missing. Your function should return which is the missing integer in
-        O(N) time. Your function must not modify the array or create any additional data structures.
+        O(n) time. Your function must not modify the array or create any additional data structures.
         Your function must follow these specifications:<br />
         Name: <code>getMissingNumber</code><br />
         Arguments (1):
@@ -146,7 +146,7 @@ function quicksort('array')
 <div class="bs-docs-example">
   Given an array of N integers with no duplicates return a count of how many
         pairs exist in this array that add up to 0. Your function must run in
-        O(N) time. Your function must follow these specifications:<br />
+        O(n) time. Your function must follow these specifications:<br />
         Name: <code>getCountOfPairs</code><br />
         Arguments (1):
           <ul><li><code>arr</code> an array of integers</li></ul><br />
