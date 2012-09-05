@@ -141,7 +141,7 @@ function render_admin(req, res) {
 function insertIntoAnswerDB(data) {
   var str = data.uid + data.question;
   var hash = crypto.createHash('md5').update(str).digest("hex").substr(0, 12);
-  console.log("AHAHSSHSHS", hash);
+
   data._id = new ObjectID(hash);
   collection.save(data);
 

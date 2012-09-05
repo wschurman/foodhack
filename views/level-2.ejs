@@ -3,4 +3,157 @@
   	Level 2 Problems
   	<small>Insomnia Cookie</small>
   </h1>
+  Do not use any predefined libraries in whichever language you choose for any
+  of these questions.
 </div>
+
+
+<h2>WebApp Implementation: Facebook Login</h2>
+<div class="bs-docs-example">
+  This is an open-ended question and you are encouraged to code it in
+        whatever way you want. The goal is simple: integrate a facebook login
+        using the Facebook API into a webpage you create.
+        Note: external libraries can be used for this problem.<br /><br />
+  See <a href="https://developers.facebook.com/" target="_blank">https://developers.facebook.com/</a> for more info.
+</div>
+<a href="/submit?p=2-1" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+  <i class="icon-thumbs-up icon-white"></i> Submit Solution
+</a>
+<hr />
+
+
+<h2>Web Implementation: Asynchronous Requests</h2>
+<div class="bs-docs-example">
+  This is an open-ended question and you are encouraged to code it in
+        whatever way you want. The goal is simple: build a webpage that loads
+        content asynchronously (so most resources are loaded after page render).
+        Make sure to comment your code explaining how and where this is occurring.
+        Note: external libraries can be used for this problem. 
+        Check out the jQuery libraries as well as the async HTML attribute for page resources.
+</div>
+<pre class="prettyprint linenums">
+$.ajax(...);
+// or
+$("#myElem").load(...);
+</pre>
+<pre class="prettyprint linenums">
+&lt;script async src="blah.js" onload="init()"&gt;&lt;/script&gt;
+</pre>
+<a href="/submit?p=2-2" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+  <i class="icon-thumbs-up icon-white"></i> Submit Solution
+</a>
+<hr />
+
+
+<h2>CSS Box with Pointer Nub</h2>
+<div class="bs-docs-example">
+  This question is intended to test your CSS knowledge.
+        Create a box with a 1 pixel border that includes a pointer nub on
+        the bottom right or other corner (as demonstrated in the image).
+        This must be implemented entirely in CSS. (Bonus: add a shadow!)<br /><br />
+        Example: <a href="http://cl.ly/image/3D1r1t0p2q1u" target="_blank">http://cl.ly/image/3D1r1t0p2q1u</a>
+</div>
+<a href="/submit?p=2-3" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+  <i class="icon-thumbs-up icon-white"></i> Submit Solution
+</a>
+<hr />
+
+
+<h2>List Reversal</h2>
+<div class="bs-docs-example">
+  Implement a singly-linked list in whatever language you want, then
+        write a function that reverses it. The function must take in
+        a single argument, which must be the head of the list. Make sure
+        to comment your code explaining the implementation of your linked list.
+</div>
+<a href="/submit?p=2-4" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+  <i class="icon-thumbs-up icon-white"></i> Submit Solution
+</a>
+<hr />
+
+
+<h2>Solve levels 0-2 of Stripe CTF</h2>
+<div class="bs-docs-example">
+  See <a href="https://stripe-ctf.com" target="_blank">https://stripe-ctf.com</a>. Submit either your ctf screen name and make it public or show us your progress page.
+</div>
+<a href="/submit?p=2-5" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+  <i class="icon-thumbs-up icon-white"></i> Submit Solution
+</a>
+<hr />
+
+
+<h2>Convert a Binary Tree to Doubly-Linked List</h2>
+<div class="bs-docs-example">
+  Implement a binary tree and a doubly-linked list in any language you want.
+        Write a function that takes the root node of a binary tree and turns it into
+        an in-order doubly-linked list. Make sure to comment your code explaining
+        the implementation of your binary tree and doubly-linked list.
+</div>
+<a href="/submit?p=2-6" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+  <i class="icon-thumbs-up icon-white"></i> Submit Solution
+</a>
+<hr />
+
+
+<h2>Quicksort</h2>
+<div class="bs-docs-example">
+  What follows is a pseudocode implementation
+        of quicksort:
+</div>
+<pre class="prettyprint linenums">
+function quicksort('array')
+  if length('array') ≤ 1
+    return 'array'  // an array of zero or one elements is already sorted
+  select and remove a pivot value 'pivot' from 'array'
+  create empty lists 'less' and 'greater'
+  for each 'x' in 'array'
+    if 'x' ≤ 'pivot' then append 'x' to 'less'
+    else append 'x' to 'greater'
+  return concatenate(quicksort('less'), 'pivot', quicksort('greater')) // two recursive calls
+</pre>
+<div class="bs-docs-example">
+        At each recursive step of this implementation, two new arrays are created
+        when the array is partitioned. Modify this implementation so that it performs
+        the partitioning and swapping of elements in place. The run-time of the
+        whole algorithm must still be O(NlogN), but should now use constant space.
+</div>
+
+<a href="/submit?p=2-7" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+  <i class="icon-thumbs-up icon-white"></i> Submit Solution
+</a>
+<hr />
+
+
+<h2>Find the Missing Number</h2>
+<div class="bs-docs-example">
+  Write a function that takes in an array of (N-1) integers. These integers
+        are unordered and numbered from 0 to N, except that one of the integers is
+        missing. Your function should return which is the missing integer in
+        O(N) time. Your function must not modify the array or create any additional data structures.
+        Your function must follow these specifications:<br />
+        Name: <code>getMissingNumber</code><br />
+        Arguments (1):
+          <ul><li><code>arr</code> an array of integers</li></ul><br />
+        Returns: the missing integer
+</div>
+<a href="/submit?p=2-8" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+  <i class="icon-thumbs-up icon-white"></i> Submit Solution
+</a>
+<hr />
+
+
+<h2>Finding Pairs that Sum to 0</h2>
+<div class="bs-docs-example">
+  Given an array of N integers with no duplicates return a count of how many
+        pairs exist in this array that add up to 0. Your function must run in
+        O(N) time. Your function must follow these specifications:<br />
+        Name: <code>getCountOfPairs</code><br />
+        Arguments (1):
+          <ul><li><code>arr</code> an array of integers</li></ul><br />
+        Returns: the count of how many pairs in <code>arr</code>
+          add up to 0
+</div>
+<a href="/submit?p=2-9" data-toggle="modal" data-target="#myModal" class="btn btn-primary">
+  <i class="icon-thumbs-up icon-white"></i> Submit Solution
+</a>
+<hr />

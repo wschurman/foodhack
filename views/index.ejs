@@ -19,7 +19,7 @@
 var d = new Date();
 var release = new Date('September 05, 2012 17:00:00');
 
-if (user && d >= release || user && is_admin || user && user.id == 100001538886297) { %>
+if (user && d >= release || user && is_admin) { %>
 
 <div class="tabbable tabs-left" id="problem-tabs">
   <ul class="nav nav-tabs">
@@ -40,7 +40,7 @@ if (user && d >= release || user && is_admin || user && user.id == 1000015388862
     <div class="tab-pane active" id="introduction">
       <div class="hero-unit">
         <h1>Welcome to Foodhack</h1>
-        <p>Click a level to the left to start hacking!</p>
+        <p>Click a level to the left to start hacking! We're here at the booth to help if you need tips. Please note that burritos and cookies will arrive at approximately 5:30.</p>
         <div class="cookies"></div>
         <div class="burrito"></div>
       </div>
