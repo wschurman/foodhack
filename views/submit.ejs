@@ -1,4 +1,4 @@
-<% if (user) { %>
+<% if (false) { %>
 <p>Only your most recent submission for each question is stored. New submissions will overwrite. You can also submit by showing us your solution at the table.</p>
 <form class="form-horizontal" enctype="multipart/form-data" method="POST" action="/submit">
   <input type="hidden" name="question" value="<%= p %>" />
@@ -26,6 +26,6 @@
 
 <% } else { %>
 
-  <div class="fb-login-button" data-show-faces="false" data-width="750" data-scope="user_website,user_work_history"></div>
+  Sorry, submissions are now closed.
 
 <% } %>

@@ -19,7 +19,7 @@
 var d = new Date();
 var release = new Date('September 05, 2012 17:00:00');
 
-if (user && d >= release || user && is_admin) { %>
+if (false && user && d >= release || user && is_admin) { %>
 
 <div class="tabbable tabs-left" id="problem-tabs">
   <ul class="nav nav-tabs">
@@ -60,9 +60,13 @@ if (user && d >= release || user && is_admin) { %>
 
 <% } else { %>
 
-<% if (d < release) { %>
+<% if (false && d < release) { %>
 <div class="alert alert-info">
   <b>This event starts Wednesday, September 5th, 2015 at 5:00 PM</b>
+</div>
+<% } else { %>
+<div class="alert alert-info">
+  <b>This event has ended. Thank you to everyone who participated!</b>
 </div>
 <% } %>
 
