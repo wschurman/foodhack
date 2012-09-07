@@ -23,7 +23,7 @@ var hashes = {};
 
 function hash_dat(uid) {
   var currentTime = new Date();
-  var str = uid + process.env.SESSION_SECRET + currentTime.getTime();
+  var str = uid + "blah" + process.env.SESSION_SECRET + currentTime.getTime();
   return crypto.createHash('md5').update(str).digest("hex").substr(0, 12);
 }
 
