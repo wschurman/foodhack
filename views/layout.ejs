@@ -39,7 +39,7 @@
     <script>
       <% if (user) { %>
       var socket = io.connect('/');
-      socket.emit('register', { uid: <%= user.id %> });
+      socket.emit('register', { hid: <%= "'"+hash+"'" %> });
       <% } %>
     </script>
   </head>

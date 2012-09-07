@@ -4,7 +4,7 @@ var async   = require('async'),
     fs      = require('fs'),
     mongo   = require('mongoskin'),
     sio     = require('socket.io'),
-    crypto = require('crypto'),
+    crypto =  require('crypto'),
     _       = require('underscore');
 
 
@@ -17,9 +17,37 @@ var admin_uids = {
   700650173: true,
   674656292: true
 };
+
+var hashed_ids = {};
+var hashes = {};
+
+function hash_dat(uid) {
+  var currentTime = new Date();
+  var str = uid + process.env.SESSION_SECRET + currentTime.getTime();
+  return crypto.createHash('md5').update(str).digest("hex").substr(0, 12);
+}
+
 function is_admin(uid) {
   return _.has(admin_uids, uid);
 }
+function is_admin_hash(hash) {
+  return _.has(hashes, hash) && _.has(admin_uids, hashes[hash]);
+}
+
+function make_hashed_id(uid, admin) {
+  if (_.has(hashed_ids, uid)) {
+    return hashed_ids[uid];
+  } else {
+    var hash = hash_dat(uid);
+    hashed_ids[uid] = hash;
+    hashes[hash] = uid;
+    return hash;
+  }
+}
+
+_.each(admin_uids, function(uid) {
+  hash_dat(uid, true);
+});
 
 // create an express webserver
 var app = express.createServer(
@@ -85,6 +113,7 @@ function render_page(req, res) {
         req:       req,
         app:       app,
         user:      user,
+        hash:      user && make_hashed_id(user.id, false),
         is_admin:  user && is_admin(user.id)
       });
     });
@@ -98,6 +127,7 @@ function render_me(req, res) {
         req:       req,
         app:       app,
         user:      user,
+        hash:      user && make_hashed_id(user.id, false),
         is_admin:  user && is_admin(user.id)
       });
     });
@@ -112,6 +142,7 @@ function render_submit(req, res) {
         req:       req,
         app:       app,
         user:      user,
+        hash:      user && make_hashed_id(user.id, false),
         is_admin:  user && is_admin(user.id),
         p:         req.param('p')
       });
@@ -127,7 +158,8 @@ function render_admin(req, res) {
           req:       req,
           app:       app,
           user:      user,
-          is_admin:  is_admin(user.id)
+          hash:      user && make_hashed_id(user.id, false),
+          is_admin:  user && is_admin(user.id)
         });
       } else {
         res.statusCode = 302;
@@ -200,10 +232,14 @@ io.sockets.on('connection', function (socket) {
   socket.is_admin = false;
 
   socket.on('register', function(data) {
-    if (is_admin(data.uid)) {
+    if (is_admin_hash(data.hid)) {
       socket.is_admin = true;
     }
-    socket.uid = data.uid;
+    if (!_.has(hashes, data.hid)) {
+      socket.server.close();
+      return false;
+    }
+    socket.uid = hashes[data.hid];
     clients[id] = {
       socket: socket
     };
