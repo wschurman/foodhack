@@ -1,3 +1,5 @@
+/* A Total Hack. */
+
 var async   = require('async'),
     express = require('express'),
     util    = require('util'),
@@ -8,11 +10,12 @@ var async   = require('async'),
     _       = require('underscore');
 
 
-// ids of admin clients
+// ids of connected socket.io clients
 var client_id = 0;
 // in memory hash table
 var clients = {};
 
+// admin fbids, set to whoever you want to be admins
 var admin_uids = {
   700650173: true,
   674656292: true
@@ -45,8 +48,9 @@ function make_hashed_id(uid, admin) {
   }
 }
 
+// hash the initial admin ids
 _.each(admin_uids, function(uid) {
-  hash_dat(uid, true);
+  hash_dat(uid, true); // set admin
 });
 
 // create an express webserver
@@ -67,7 +71,6 @@ var app = express.createServer(
 app.set('view options', { layout:'layout.ejs' });
 
 var io = sio.listen(app);
-
 io.configure(function () {
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
@@ -101,15 +104,15 @@ app.dynamicHelpers({
 });
 
 // Connect to MongoDB
-
 var ObjectID = mongo.ObjectID;
-var mdb = mongo.db('mongodb://heroku_app7048839:6688psq65ef8lb46ps1grdbdjt@ds037407-a.mongolab.com:37407/heroku_app7048839');
+var muri = process.env.MONGOLAB_URI;
+var mdb = mongo.db(muri);
 var collection = mdb.collection('foodhack_submissions');
 
-function render_page(req, res) {
+function render_it(req, res, p_name) {
   req.facebook.app(function(app) {
     req.facebook.me(function(user) {
-      res.render('index.ejs', {
+      res.render(p_name+'.ejs', {
         req:       req,
         app:       app,
         user:      user,
@@ -119,26 +122,18 @@ function render_page(req, res) {
     });
   });
 }
-
+function render_homepage(req, res) {
+  render_it(req, res, "index");
+}
 function render_me(req, res) {
-  req.facebook.app(function(app) {
-    req.facebook.me(function(user) {
-      res.render('me.ejs', {
-        req:       req,
-        app:       app,
-        user:      user,
-        hash:      user && make_hashed_id(user.id, false),
-        is_admin:  user && is_admin(user.id)
-      });
-    });
-  });
+  render_it(req, res, "me");
 }
 
 function render_submit(req, res) {
   req.facebook.app(function(app) {
     req.facebook.me(function(user) {
       res.render('submit.ejs', {
-        layout: false,
+        layout:    false,
         req:       req,
         app:       app,
         user:      user,
@@ -177,7 +172,7 @@ function insertIntoAnswerDB(data) {
   data._id = new ObjectID(hash);
   collection.save(data);
 
-  // notify admins
+  // notify admin sockets
   _.each(clients, function(c, id) {
     if (c.socket && c.socket.is_admin) {
       c.socket.emit('submissions', [data]);
@@ -188,7 +183,6 @@ function insertIntoAnswerDB(data) {
 function getAllSubmissions(cb) {
   collection.find().toArray(cb);
 }
-
 function getMySubmissions(uid, cb) {
   collection.find({"uid": ""+uid+""}).toArray(cb);
 }
@@ -213,7 +207,8 @@ function do_post_submit(req, res) {
   });
 }
 
-app.get('/', render_page);
+// routes
+app.get('/', render_homepage);
 
 app.get('/submit', render_submit);
 app.post('/submit', do_post_submit);
@@ -222,10 +217,11 @@ app.get('/me', render_me);
 app.get('/admin', render_admin);
 
 
-/* Socket Functions, these can be exploited... whatever */
+/* Socket Functions, these could possibly be exploited... whatever */
 
 io.sockets.on('connection', function (socket) {
   
+  // set socket for registration
   client_id += 1;
   var id = client_id;
   socket.client_id = id;
